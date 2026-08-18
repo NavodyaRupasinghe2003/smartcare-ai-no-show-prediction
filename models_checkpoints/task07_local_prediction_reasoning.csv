@@ -1,0 +1,25 @@
+Feature,Patient Value,Reference Value,Probability Contribution,Absolute Contribution
+missed_previous_appointments,2.0,0.0,0.10999999999999999,0.10999999999999999
+missed_ratio,0.3333333333333333,0.0,0.10666666666666663,0.10666666666666663
+appointment_month,4.0,6.0,0.07999999999999996,0.07999999999999996
+has_missed_before,1.0,0.0,0.07333333333333336,0.07333333333333336
+previous_appointments,6.0,3.0,-0.06666666666666665,0.06666666666666665
+previous_admissions,0.0,1.0,0.05999999999999994,0.05999999999999994
+waiting_days,3.0,22.0,0.033333333333333326,0.033333333333333326
+appointment_dayofweek,1.0,3.0,-0.030000000000000027,0.030000000000000027
+department_Orthopedics,1.0,0.0,-0.020000000000000018,0.020000000000000018
+diagnosis_Kidney Infection,1.0,0.0,0.006666666666666599,0.006666666666666599
+age,42.0,45.0,0.0033333333333332993,0.0033333333333332993
+department_General Medicine,0.0,0.0,0.0,0.0
+department_Radiology,0.0,0.0,0.0,0.0
+department_Laboratory Services,0.0,0.0,0.0,0.0
+department_Neurology,0.0,0.0,0.0,0.0
+department_Pediatrics,0.0,0.0,0.0,0.0
+diagnosis_Diabetes,0.0,0.0,0.0,0.0
+diagnosis_Chest Pain,0.0,0.0,0.0,0.0
+diagnosis_Back Pain,0.0,0.0,0.0,0.0
+diagnosis_Fever,0.0,0.0,0.0,0.0
+diagnosis_Hypertension,0.0,0.0,0.0,0.0
+diagnosis_Fracture,0.0,0.0,0.0,0.0
+diagnosis_Pneumonia,0.0,0.0,0.0,0.0
+diagnosis_Migraine,0.0,0.0,0.0,0.0

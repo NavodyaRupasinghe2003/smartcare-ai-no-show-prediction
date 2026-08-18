@@ -1,0 +1,8 @@
+SMARTCARE TASK 07 INTERPRETATION REPORT
+Model: Random Forest
+Data: validation set only; test set not reused.
+Global method: permutation importance using F1-score.
+Local method: one-feature-at-a-time sensitivity against training medians.
+Top global features: waiting_days, previous_appointments, appointment_month, appointment_dayofweek, age
+Example patient probability: 0.6000
+Explanations describe model behaviour, not causation.
