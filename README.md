@@ -330,7 +330,7 @@ http://localhost:8501
 | Tasks 06 and 07 | Nuwani Hansika |
 | Task 08 | Nisal Damsika |
 
-Each member completed the assigned task and shared the relevant outputs through the project repository. The notebooks, processed datasets, trained model files, evaluation outputs, explainability files, and prototype were combined in the `main` branch.
+The notebooks, processed datasets, trained model files, evaluation outputs, explainability files, and prototype were combined in the `main` branch.
 
 ---
 
