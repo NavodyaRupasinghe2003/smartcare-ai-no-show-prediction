@@ -69,7 +69,7 @@ The preprocessing stage includes:
 - Creating `missed_ratio`
 - Creating `has_missed_before`
 
-The continuous `waiting_days` feature is retained directly. An additional long-wait flag is not used because waiting days already contains the required information.
+The continuous `waiting_days` feature is retained directly.
 
 The following processed files are created:
 
