@@ -64,7 +64,7 @@ def normalize_nic(nic: str) -> str:
     return (nic or "").strip().upper()
 
 
-# Client lookups (from the database, not the UI)
+# patient lookups (from the database, not the UI)
 
 def get_client_by_nic(nic: str):
     nic = normalize_nic(nic)
@@ -74,16 +74,43 @@ def get_client_by_nic(nic: str):
     return dict(row) if row else None
 
 
-def create_client(nic, full_name, age, gender, contact_number, blood_group, address) -> None:
-    nic = normalize_nic(nic)
+def get_next_patient_id() -> str:
+    """Return the next available P11001, P11002, ... ID."""
     conn = database.get_connection()
-    conn.execute(
-        "INSERT INTO clients (nic, full_name, age, gender, contact_number, blood_group, address) "
-        "VALUES (?, ?, ?, ?, ?, ?, ?)",
-        (nic, full_name, age, gender, contact_number, blood_group, address),
-    )
-    conn.commit()
+    rows = conn.execute(
+        "SELECT patient_id FROM clients WHERE patient_id LIKE 'P%'"
+    ).fetchall()
     conn.close()
+    nums = []
+    for row in rows:
+        m = re.fullmatch(r"P(\d+)", row["patient_id"] or "")
+        if m:
+            nums.append(int(m.group(1)))
+    next_num = max([11000, *nums]) + 1
+    while True:
+        candidate = f"P{next_num}"
+        conn = database.get_connection()
+        exists = conn.execute("SELECT 1 FROM clients WHERE patient_id = ?", (candidate,)).fetchone()
+        conn.close()
+        if not exists:
+            return candidate
+        next_num += 1
+
+
+def create_client(nic, full_name, age, gender, contact_number, blood_group, address) -> dict:
+    nic = normalize_nic(nic)
+    patient_id = get_next_patient_id()
+    conn = database.get_connection()
+    try:
+        conn.execute(
+            "INSERT INTO clients (patient_id, nic, full_name, age, gender, contact_number, blood_group, address) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            (patient_id, nic, full_name, age, gender, contact_number, blood_group, address),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+    return {"patient_id": patient_id, "nic": nic}
 
 
 def update_client(nic, full_name, age, gender, contact_number, blood_group, address) -> None:
@@ -324,11 +351,11 @@ def apply_auto_no_show() -> int:
     return updated
 
 
-def get_all_appointments(department=None, sort_order="Newest first", high_risk_only=False) -> list:
+def get_all_appointments(department=None, sort_order="Newest first", high_risk_only=False, status=None) -> list:
     apply_auto_no_show()
     conn = database.get_connection()
     query = """
-        SELECT a.*, c.full_name, d.name AS doctor_name, s.full_name AS entered_by_name
+        SELECT a.*, c.patient_id, c.full_name, d.name AS doctor_name, s.full_name AS entered_by_name
         FROM appointments a
         JOIN clients c ON a.client_nic = c.nic
         LEFT JOIN doctors d ON a.doctor_id = d.doctor_id
@@ -340,6 +367,9 @@ def get_all_appointments(department=None, sort_order="Newest first", high_risk_o
         params.append(department)
     if high_risk_only:
         conditions.append("a.risk_label = 'High Risk'")
+    if status and status != "All":
+        conditions.append("a.status = ?")
+        params.append(status)
     if conditions:
         query += " WHERE " + " AND ".join(conditions)
     query += " ORDER BY a.appointment_date " + ("DESC" if sort_order == "Newest first" else "ASC")
@@ -350,9 +380,15 @@ def get_all_appointments(department=None, sort_order="Newest first", high_risk_o
 
 
 def update_appointment_status(appointment_id: int, new_status: str) -> None:
-    """new_status='Confirmed' means the patient attended; 'Cancelled' means
-    the booking was cancelled. Both are only valid while still 'Pending'."""
+    """Move a pending appointment to a valid lifecycle status."""
+    if new_status not in {"Pending", "Confirmed", "Cancelled"}:
+        raise ValueError("Invalid appointment status.")
     conn = database.get_connection()
-    conn.execute("UPDATE appointments SET status = ? WHERE appointment_id = ?", (new_status, appointment_id))
+    cur = conn.execute(
+        "UPDATE appointments SET status = ? WHERE appointment_id = ? AND status = 'Pending'",
+        (new_status, appointment_id),
+    )
     conn.commit()
     conn.close()
+    if cur.rowcount == 0:
+        raise ValueError("Only pending appointments can be confirmed or cancelled.")
