@@ -324,7 +324,7 @@ http://localhost:8501
 
 | Assigned Tasks | Group Member |
 | --- | --- |
-| Tasks 01 and 02 | Amaya |
+| Tasks 01 and 02 | Amaya Nethmini |
 | Tasks 03 and 04 | Navodya Rupasinghe |
 | Task 05 | Ranudi Nethmini |
 | Tasks 06 and 07 | Nuwani Hansika |
