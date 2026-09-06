@@ -6,7 +6,6 @@ This version is aligned with the final Task 03 to Task 07 workflow.
 
 - Final model is Random Forest.
 - The model uses 24 input features.
-- `long_wait_flag` is not used.
 - The class decision uses the fixed threshold of 0.39.
 - The displayed risk uses a sigmoid-calibrated probability model fitted on validation data only.
 - The local explanation uses one-feature-at-a-time sensitivity against raw training-set medians.
